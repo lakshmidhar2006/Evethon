@@ -1,38 +1,52 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-// import "./config/passport.js"
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import http from "http";
+import { Server as SocketIOServer } from "socket.io";
+
+import { connectDB } from "./config/db.js";
+import authRoutes from "./routes/auth.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
+import eventRoutes from "./routes/event.routes.js";
+import registrationRoutes from "./routes/registration.routes.js";
+import paymentRoutes from "./routes/payment.routes.js";
+import notifyRoutes from "./routes/notify.routes.js";
+import chatRoutes, { attachSocket } from "./routes/chat.routes.js";
+import reportRoutes from "./routes/report.routes.js";
 
 dotenv.config();
 
 const app = express();
-app.use(cors({
-    origin: "https://event-management-mern-coral.vercel.app",
-    credentials: true
-}));     
-
-
-
+const server = http.createServer(app);
+const io = new SocketIOServer(server, {
+  cors: { origin: process.env.CORS_ORIGIN || "*", credentials: true }
+});
+attachSocket(io);
 
 app.use(express.json());
-app.use(cookieParser())
-const PORT = process.env.PORT || 5000
+app.use(cookieParser());
+app.use(cors({ origin: process.env.CORS_ORIGIN || "*", credentials: true }));
+app.use(helmet());
+app.use(morgan("dev"));
 
-import eventRoutes from './routes/eventRoutes.js';
-app.use('/api/events', eventRoutes);
+connectDB();
 
-import authRoutes from './routes/authRoutes.js';
-app.use('/api/auth', authRoutes);
+app.get("/health", (req, res) => res.json({ status: "ok" }));
 
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/registrations", registrationRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/notify", notifyRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/reports", reportRoutes);
 
+// Global 404
+app.use((req, res) => res.status(404).json({ message: "Not found" }));
 
-mongoose.connect('mongodb+srv://root:root@cluster0.rzoungm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-  .then(() => {
-    console.log('MongoDB connected');
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch((err) => console.log(' Mongo error:', err));
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => console.log(`🚀 Server listening on ${PORT}`));

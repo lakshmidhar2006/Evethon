@@ -1,40 +1,111 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import HostEvent from './pages/HostEvent';
-import EventList from './pages/EventList';
-import MyEvents from './pages/myEvents';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
-import HostScholarship from './pages/Scholarship'
-import ListScholarship from './pages/ListScholarship';
-import Contact from './pages/About';
-import OtpVerifyPage from './pages/OtpVerifyPage';
-import Home from './pages/Home';
-import MyScholarship from './pages/MyScholarship';
-import RegisteredEvents from './pages/RegisteredEvents';
-import Competition from './pages/competition';
-import GoogleSuccess from './components/GoogleSuccess';
+import ProtectedRoute from './components/ProtectedRoute';
+
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
+import EventList from './pages/Student/EventList';
+import EventDetails from './pages/Student/EventDetails';
+import MyRegistrations from './pages/Student/MyRegistrations';
+import OrganizerDashboard from './pages/Organizer/Dashboard';
+import CreateEvent from './pages/Organizer/CreateEvent';
+import ManageEvents from './pages/Organizer/ManageEvents';
+import AdminDashboard from './pages/Admin/Dashboard';
+import Approvals from './pages/Admin/Approvals';
+import Reports from './pages/Admin/Reports';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
+
 function App() {
   return (
-    <BrowserRouter>
-      {/* <Navbar /> */}
-      <Routes>
-        <Route path="/" element={<><Navbar/><Home /></>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/host-event" element={<><Navbar/><HostEvent /></>} />
-        <Route path="/events" element={<><Navbar/><Competition/></>} />
-        <Route path="/my-events" element={<><Navbar/><MyEvents /></>} />
-        <Route path="/host-Scholarship" element={<><Navbar/><HostScholarship /></>} />
-        <Route path="/Scholarship" element={<><Navbar/><ListScholarship /></>} />
-        <Route path="/Contact" element={<><Navbar/><Contact /></>} />
-        <Route path="/otp-verfy" element={<OtpVerifyPage />} />
-        <Route path="/my-Scholarship" element={<><Navbar/><MyScholarship /></>} />
-        <Route path="/registered-events" element={<><Navbar/><RegisteredEvents /></>} />
-        <Route path="/update-event/:eventId" element={<><Navbar/><HostEvent /></>} /> 
-        <Route path="/google-success" element={<><Navbar/><GoogleSuccess /></>} /> 
-      </Routes>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <div className="min-h-screen">
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Navigate to="/events" replace />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+
+              <Route path="/events" element={<EventList />} />
+              <Route path="/events/:id" element={<EventDetails />} />
+
+              <Route
+                path="/my-registrations"
+                element={
+                  <ProtectedRoute roles={['student']}>
+                    <MyRegistrations />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/organizer/dashboard"
+                element={
+                  <ProtectedRoute roles={['organizer', 'admin']}>
+                    <OrganizerDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/organizer/create"
+                element={
+                  <ProtectedRoute roles={['organizer', 'admin']}>
+                    <CreateEvent />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/organizer/events/:id"
+                element={
+                  <ProtectedRoute roles={['organizer', 'admin']}>
+                    <ManageEvents />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/admin/dashboard"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/approvals"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <Approvals />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/reports"
+                element={
+                  <ProtectedRoute roles={['admin']}>
+                    <Reports />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route path="*" element={<Navigate to="/events" replace />} />
+            </Routes>
+          </div>
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 
