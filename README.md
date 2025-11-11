@@ -17,7 +17,10 @@ It enables **Organizers** to host, manage, and approve events, while **Students*
 An **Admin panel** oversees event approvals, analytics, and reporting — streamlining campus and community event workflows.
 
 ---
+## 🌐 Live Demo
 
+- **Frontend (Vercel):** [https://evethon.vercel.app](https://evethon.vercel.app)
+- **Backend (Render):** [https://evethon.onrender.com](https://evethon.onrender.com)
 ## 🚀 Features
 
 ### 👨‍💼 Organizers
