@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    organizerStatus: {
+      type: String,
+      enum: ["none", "pending", "approved", "rejected"],
+      default: "none"
+    },
     isAdmin: {
       type: Boolean,
       default: false,

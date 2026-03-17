@@ -1,12 +1,13 @@
 import express from "express";
 import { verifyToken, authorizeRoles } from "../middlewares/auth.middleware.js";
 import { createEvent, listEvents, getEvent, updateEvent, submitEvent, closeEvent, getPopularEvents, deleteEvent } from "../controllers/event.controller.js";
+import { cache } from "../middleware/cache.middleware.js";
 
 const router = express.Router();
 
 // public
-router.get("/popular", getPopularEvents);
-router.get("/", listEvents);
+router.get("/popular", cache(60), getPopularEvents);
+router.get("/", cache(60), listEvents);
 router.get("/:id", getEvent);
 
 // organizer/admin

@@ -23,6 +23,8 @@ export function attachSocket(io) {
   });
 }
 
+export const getIO = () => ioRef;
+
 const router = express.Router();
 router.get("/:eventId", verifyToken, getHistory);
 router.delete("/:messageId", verifyToken, authorizeRoles("organizer", "admin"), removeMessage);

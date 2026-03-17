@@ -22,6 +22,7 @@ router.post('/organizer', verifyToken, async (req, res) => {
             req.user.id,
             {
                 organizerEnabled: true,
+                organizerStatus: "pending", // Set the new workflow status
                 organizerProfile: {
                     organizationName,
                     organizationType,
@@ -34,11 +35,12 @@ router.post('/organizer', verifyToken, async (req, res) => {
         );
 
         res.json({
-            message: "Organizer capability enabled",
+            message: "Organizer capability requested",
             user: {
                 id: updatedUser._id,
                 email: updatedUser.email,
                 organizerEnabled: updatedUser.organizerEnabled,
+                organizerStatus: updatedUser.organizerStatus, // Return status
                 isAdmin: updatedUser.isAdmin,
                 organizerProfile: updatedUser.organizerProfile
             }

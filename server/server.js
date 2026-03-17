@@ -8,6 +8,7 @@ import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 
 import { connectDB } from "./config/db.js";
+import { connectRedis } from "./config/redis.js";
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import eventRoutes from "./routes/event.routes.js";
@@ -29,11 +30,15 @@ attachSocket(io);
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: process.env.CORS_ORIGIN || "*", credentials: true }));
+app.use(cors({ 
+  origin: [process.env.CORS_ORIGIN, "http://localhost:5173", "http://localhost"].filter(Boolean), 
+  credentials: true 
+}));
 app.use(helmet());
 app.use(morgan("dev"));
 
 connectDB();
+connectRedis();
 
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 

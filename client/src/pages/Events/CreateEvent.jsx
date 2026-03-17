@@ -128,6 +128,38 @@ const CreateEvent = () => {
         }
     };
 
+    if (user?.organizerStatus === 'pending') {
+        return (
+            <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center p-6 font-sans selection:bg-purple-500/30 overflow-hidden relative">
+                {/* Aurora Background */}
+                <div className="absolute inset-0 pointer-events-none fixed">
+                    <div className="absolute top-[-20%] right-[-20%] w-[60%] h-[60%] bg-[#4F46E5]/10 rounded-full blur-[120px] animate-aurora mix-blend-screen" />
+                    <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#A855F7]/10 rounded-full blur-[120px] animate-aurora delay-2000 mix-blend-screen" />
+                </div>
+
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="w-full max-w-md bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 shadow-[0_0_50px_rgba(0,0,0,0.3)] relative z-10 text-center flex flex-col items-center"
+                >
+                    <div className="w-20 h-20 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(234,179,8,0.2)]">
+                        <Clock className="w-10 h-10 text-yellow-500" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white mb-2">Access Restricted</h2>
+                    <p className="text-gray-400 mb-8 font-light">
+                        Your organizer application is currently under review. Please wait for admin approval before creating events.
+                    </p>
+                    <button
+                        onClick={() => navigate('/dashboard')}
+                        className="w-full bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors"
+                    >
+                        Back to Dashboard
+                    </button>
+                </motion.div>
+            </div>
+        );
+    }
+
     if (success) {
         return (
             <div className="min-h-screen bg-[#0A0A0B] flex items-center justify-center p-6 font-sans selection:bg-purple-500/30 overflow-hidden relative">
@@ -145,9 +177,9 @@ const CreateEvent = () => {
                     <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                         <CheckCircle className="w-10 h-10 text-green-500" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2">Request Submitted</h2>
+                    <h2 className="text-2xl font-bold text-white mb-2">Submission Successful</h2>
                     <p className="text-gray-400 mb-8">
-                        Your event request has been submitted successfully. Kindly wait for admin approval.
+                        Your event has been submitted. Kindly wait for the approval of admin to go live.
                     </p>
                     <button
                         onClick={() => navigate('/dashboard')}

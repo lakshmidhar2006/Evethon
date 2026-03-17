@@ -46,8 +46,10 @@ An **Admin panel** oversees event approvals, analytics, and reporting — stream
 - RESTful API architecture  
 - Responsive UI with glassmorphism + TailwindCSS  
 - Secure routes & input validations  
-- Real-time updates for registration and approvals  
+- Real-time updates for registration and approvals using Socket.io
+- High-performance query caching with Redis
 - Scalable backend (MongoDB Replica-ready)
+- Containerized infrastructure with Docker and Nginx reverse proxy
 
 ---
 
@@ -74,13 +76,15 @@ flowchart LR
 
 | Layer | Technologies |
 |-------|---------------|
-| **Frontend** | React.js, Vite, TailwindCSS, React Query, Axios |
-| **Backend** | Node.js, Express.js, REST APIs, JWT Auth |
+| **Frontend** | React.js, Vite, TailwindCSS, React Query, Axios, Socket.io-client |
+| **Backend** | Node.js, Express.js, REST APIs, JWT Auth, Socket.io |
+| **Caching & Messaging** | Redis |
 | **Database** | MongoDB (Mongoose ORM) |
 | **Payments & Reports** | Stripe/Razorpay (mock), CSV exports |
+| **Infrastructure** | Docker, Nginx, Docker Compose |
 | **Version Control** | Git + GitHub |
 | **Testing & API Tools** | Postman, Thunder Client |
-| **Deployment** | Backend: Render • Frontend: Vercel |
+| **Deployment** | Dockerized (Ready for AWS/ECR/ECS or Digital Ocean) |
 
 ---
 
@@ -92,38 +96,45 @@ flowchart LR
 
 ---
 
-## ⚡ Installation & Setup
+### ⚡ Installation & Setup
 
-### 1️⃣ Clone the Repository
+#### 🐳 Using Docker (Recommended)
+The easiest way to run the entire platform including Redis and MongoDB:
+```bash
+docker-compose up --build
+```
+Frontend runs on `http://localhost`, Backend on `http://localhost:4000`.
+
+#### 🛠️ Manual Setup
+
+1️⃣ **Clone the Repository**
 ```bash
 git clone https://github.com/yourusername/eventsphere.git
 cd eventsphere
 ```
 
-### 2️⃣ Backend Setup
+2️⃣ **Backend Setup**
 ```bash
 cd server
 npm install
 npm run dev
 ```
-
-Create a `.env` file inside `/server`:
+Create a `.env` file in `/server`:
 ```env
 PORT=4000
-MONGO_URI=your_mongodb_uri
+MONGODB_URI=your_mongodb_uri
+REDIS_URL=redis://localhost:6379
 JWT_SECRET=your_secret_key
 CORS_ORIGIN=http://localhost:5173
 ```
 
-### 3️⃣ Frontend Setup
+3️⃣ **Frontend Setup**
 ```bash
-cd ../frontend
+cd ../client
 npm install
 npm run dev
 ```
-
-Frontend runs on `http://localhost:5173`  
-Backend runs on `http://localhost:4000`
+Frontend runs on `http://localhost:5173`.
 
 ---
 

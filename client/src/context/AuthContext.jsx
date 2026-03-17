@@ -17,14 +17,14 @@ export const AuthProvider = ({ children }) => {
     const loginMutation = useMutation({
         mutationFn: authApi.login,
         onSuccess: (data) => {
-            queryClient.setQueryData(['authUser'], data);
+            queryClient.setQueryData(['authUser'], data.user);
         },
     });
 
     const registerMutation = useMutation({
         mutationFn: authApi.register,
         onSuccess: (data) => {
-            queryClient.setQueryData(['authUser'], data);
+            queryClient.setQueryData(['authUser'], data.user);
         },
     });
 

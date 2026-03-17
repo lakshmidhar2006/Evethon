@@ -19,8 +19,15 @@ const ProtectedRoute = ({ children, roles = [] }) => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    if (roles.length > 0 && !roles.includes(user.role)) {
-        return <Navigate to="/" replace />; // Or unauthorized page
+    if (roles.length > 0) {
+        // If they have the legacy role string, or they have the specific capability requested
+        const hasLegacyRole = roles.includes(user.role);
+        const hasAdminCap = roles.includes('admin') && user.isAdmin;
+        const hasOrganizerCap = roles.includes('organizer') && user.organizerEnabled;
+        
+        if (!hasLegacyRole && !hasAdminCap && !hasOrganizerCap) {
+            return <Navigate to="/" replace />; // Or unauthorized page
+        }
     }
 
     return children;

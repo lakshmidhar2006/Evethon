@@ -21,16 +21,33 @@ export const register = async (req, res) => {
       isAdmin: false
     });
 
-    res.status(201).json({
-      message: "User registered",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        organizerEnabled: user.organizerEnabled,
-        isAdmin: user.isAdmin
-      }
+    // Include capabilities in token
+    const token = jwt.sign({
+      id: user._id,
+      email: user.email,
+      organizerEnabled: user.organizerEnabled,
+      organizerStatus: user.organizerStatus,
+      isAdmin: user.isAdmin
+    }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+    res.status(201)
+      .cookie("accessToken", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 60 * 60 * 1000
+      })
+      .json({
+        message: "User registered",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          organizerEnabled: user.organizerEnabled,
+          organizerStatus: user.organizerStatus,
+          isAdmin: user.isAdmin
+        }
     });
 
   } catch (e) {
@@ -52,6 +69,7 @@ export const login = async (req, res) => {
       id: user._id,
       email: user.email,
       organizerEnabled: user.organizerEnabled,
+      organizerStatus: user.organizerStatus,
       isAdmin: user.isAdmin
     }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
@@ -70,6 +88,7 @@ export const login = async (req, res) => {
           email: user.email,
           role: user.role,
           organizerEnabled: user.organizerEnabled,
+          organizerStatus: user.organizerStatus,
           isAdmin: user.isAdmin,
           organizerProfile: user.organizerProfile
         }
@@ -85,7 +104,7 @@ export const me = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json({ user });
+    res.json(user);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
