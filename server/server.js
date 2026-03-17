@@ -1,9 +1,9 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
 import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 
@@ -19,7 +19,6 @@ import chatRoutes, { attachSocket } from "./routes/chat.routes.js";
 import reportRoutes from "./routes/report.routes.js";
 import onboardingRoutes from "./routes/onboarding.routes.js";
 
-dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
