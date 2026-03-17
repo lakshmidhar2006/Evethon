@@ -49,7 +49,7 @@ const EventDetails = () => {
     useEffect(() => {
         if (!event) return;
 
-        const socket = io('/', {
+        const socket = io('https://evethon.onrender.com', {
             withCredentials: true,
             path: '/socket.io'
         });
